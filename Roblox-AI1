@@ -1,0 +1,476 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+--==================================================
+-- SETTINGS
+--==================================================
+
+local AI_NAME = "AI1ReD"
+local PLAYER_NAME = "MR.ReD23"
+
+local RED = Color3.fromRGB(220, 0, 0)
+local DARK_RED = Color3.fromRGB(120, 0, 0)
+local BLACK = Color3.fromRGB(8, 8, 8)
+local DARK = Color3.fromRGB(15, 15, 15)
+local LIGHT_DARK = Color3.fromRGB(25, 25, 25)
+local WHITE = Color3.fromRGB(235, 235, 235)
+local GRAY = Color3.fromRGB(150, 150, 150)
+
+--==================================================
+-- GUI
+--==================================================
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "AI1ReD_GUI"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.Parent = player:WaitForChild("PlayerGui")
+
+--==================================================
+-- OPEN BUTTON
+--==================================================
+
+local openButton = Instance.new("TextButton")
+openButton.Name = "OpenAI"
+openButton.Size = UDim2.new(0, 55, 0, 55)
+openButton.Position = UDim2.new(0, 15, 0.5, -27)
+openButton.BackgroundColor3 = BLACK
+openButton.BorderSizePixel = 0
+openButton.Text = "AI"
+openButton.TextColor3 = RED
+openButton.TextSize = 17
+openButton.Font = Enum.Font.GothamBold
+openButton.Visible = false
+openButton.Parent = gui
+
+local openCorner = Instance.new("UICorner")
+openCorner.CornerRadius = UDim.new(1, 0)
+openCorner.Parent = openButton
+
+local openStroke = Instance.new("UIStroke")
+openStroke.Color = RED
+openStroke.Thickness = 2
+openStroke.Parent = openButton
+
+--==================================================
+-- MAIN WINDOW
+--==================================================
+
+local main = Instance.new("Frame")
+main.Name = "MainWindow"
+main.Size = UDim2.new(0.92, 0, 0.82, 0)
+main.Position = UDim2.new(0.04, 0, 0.09, 0)
+main.BackgroundColor3 = BLACK
+main.BorderSizePixel = 0
+main.Parent = gui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 14)
+mainCorner.Parent = main
+
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = RED
+mainStroke.Thickness = 2
+mainStroke.Parent = main
+
+--==================================================
+-- HEADER
+--==================================================
+
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 55)
+header.BackgroundColor3 = DARK
+header.BorderSizePixel = 0
+header.Parent = main
+
+local headerCorner = Instance.new("UICorner")
+headerCorner.CornerRadius = UDim.new(0, 14)
+headerCorner.Parent = header
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -110, 1, 0)
+title.Position = UDim2.new(0, 20, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Ai By AHReD"
+title.TextColor3 = RED
+title.TextSize = 22
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = header
+
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 42, 0, 42)
+closeButton.Position = UDim2.new(1, -50, 0, 6)
+closeButton.BackgroundColor3 = LIGHT_DARK
+closeButton.BorderSizePixel = 0
+closeButton.Text = "×"
+closeButton.TextColor3 = WHITE
+closeButton.TextSize = 28
+closeButton.Font = Enum.Font.GothamBold
+closeButton.Parent = header
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 10)
+closeCorner.Parent = closeButton
+
+--==================================================
+-- CHAT LIST
+--==================================================
+
+local sidebar = Instance.new("Frame")
+sidebar.Size = UDim2.new(0, 180, 1, -55)
+sidebar.Position = UDim2.new(0, 0, 0, 55)
+sidebar.BackgroundColor3 = DARK
+sidebar.BorderSizePixel = 0
+sidebar.Parent = main
+
+local sidebarTitle = Instance.new("TextLabel")
+sidebarTitle.Size = UDim2.new(1, -20, 0, 40)
+sidebarTitle.Position = UDim2.new(0, 10, 0, 10)
+sidebarTitle.BackgroundTransparency = 1
+sidebarTitle.Text = "CHATS"
+sidebarTitle.TextColor3 = WHITE
+sidebarTitle.TextSize = 17
+sidebarTitle.Font = Enum.Font.GothamBold
+sidebarTitle.TextXAlignment = Enum.TextXAlignment.Left
+sidebarTitle.Parent = sidebar
+
+local newChat = Instance.new("TextButton")
+newChat.Size = UDim2.new(1, -20, 0, 38)
+newChat.Position = UDim2.new(0, 10, 0, 55)
+newChat.BackgroundColor3 = RED
+newChat.BorderSizePixel = 0
+newChat.Text = "+ New Chat"
+newChat.TextColor3 = WHITE
+newChat.TextSize = 15
+newChat.Font = Enum.Font.GothamBold
+newChat.Parent = sidebar
+
+local newCorner = Instance.new("UICorner")
+newCorner.CornerRadius = UDim.new(0, 8)
+newCorner.Parent = newChat
+
+local chatList = Instance.new("ScrollingFrame")
+chatList.Size = UDim2.new(1, -20, 1, -105)
+chatList.Position = UDim2.new(0, 10, 0, 100)
+chatList.BackgroundTransparency = 1
+chatList.BorderSizePixel = 0
+chatList.ScrollBarThickness = 3
+chatList.Parent = sidebar
+
+local chatLayout = Instance.new("UIListLayout")
+chatLayout.Padding = UDim.new(0, 6)
+chatLayout.Parent = chatList
+
+--==================================================
+-- CHAT AREA
+--==================================================
+
+local chatArea = Instance.new("Frame")
+chatArea.Size = UDim2.new(1, -180, 1, -55)
+chatArea.Position = UDim2.new(0, 180, 0, 55)
+chatArea.BackgroundColor3 = BLACK
+chatArea.BorderSizePixel = 0
+chatArea.Parent = main
+
+local chatTitle = Instance.new("TextLabel")
+chatTitle.Size = UDim2.new(1, -30, 0, 45)
+chatTitle.Position = UDim2.new(0, 15, 0, 5)
+chatTitle.BackgroundTransparency = 1
+chatTitle.Text = AI_NAME
+chatTitle.TextColor3 = RED
+chatTitle.TextSize = 20
+chatTitle.Font = Enum.Font.GothamBold
+chatTitle.TextXAlignment = Enum.TextXAlignment.Left
+chatTitle.Parent = chatArea
+
+--==================================================
+-- MESSAGES
+--==================================================
+
+local messages = Instance.new("ScrollingFrame")
+messages.Size = UDim2.new(1, -30, 1, -125)
+messages.Position = UDim2.new(0, 15, 0, 50)
+messages.BackgroundTransparency = 1
+messages.BorderSizePixel = 0
+messages.ScrollBarThickness = 4
+messages.CanvasSize = UDim2.new(0, 0, 0, 0)
+messages.Parent = chatArea
+
+local messageLayout = Instance.new("UIListLayout")
+messageLayout.Padding = UDim.new(0, 10)
+messageLayout.Parent = messages
+
+messageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	messages.CanvasSize = UDim2.new(
+		0,
+		0,
+		0,
+		messageLayout.AbsoluteContentSize.Y + 20
+	)
+
+	messages.CanvasPosition = Vector2.new(
+		0,
+		math.max(0, messageLayout.AbsoluteContentSize.Y)
+	)
+end)
+
+--==================================================
+-- MESSAGE CREATOR
+--==================================================
+
+local function addMessage(sender, text, isAI)
+
+	local container = Instance.new("Frame")
+	container.Size = UDim2.new(1, -10, 0, 0)
+	container.AutomaticSize = Enum.AutomaticSize.Y
+	container.BackgroundTransparency = 1
+	container.Parent = messages
+
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Size = UDim2.new(1, 0, 0, 22)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Text = sender
+	nameLabel.TextColor3 = isAI and RED or GRAY
+	nameLabel.TextSize = 14
+	nameLabel.Font = Enum.Font.GothamBold
+	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+	nameLabel.Parent = container
+
+	local message = Instance.new("TextLabel")
+	message.Size = UDim2.new(1, -10, 0, 0)
+	message.Position = UDim2.new(0, 5, 0, 25)
+	message.AutomaticSize = Enum.AutomaticSize.Y
+	message.BackgroundColor3 = isAI and LIGHT_DARK or Color3.fromRGB(20, 20, 20)
+	message.BorderSizePixel = 0
+	message.Text = text
+	message.TextColor3 = WHITE
+	message.TextSize = 15
+	message.Font = Enum.Font.Gotham
+	message.TextWrapped = true
+	message.TextXAlignment = Enum.TextXAlignment.Left
+	message.TextYAlignment = Enum.TextYAlignment.Top
+	message.Parent = container
+
+	local padding = Instance.new("UIPadding")
+	padding.PaddingLeft = UDim.new(0, 10)
+	padding.PaddingRight = UDim.new(0, 10)
+	padding.PaddingTop = UDim.new(0, 8)
+	padding.PaddingBottom = UDim.new(0, 8)
+	padding.Parent = message
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = message
+end
+
+--==================================================
+-- INPUT
+--==================================================
+
+local inputFrame = Instance.new("Frame")
+inputFrame.Size = UDim2.new(1, -30, 0, 55)
+inputFrame.Position = UDim2.new(0, 15, 1, -65)
+inputFrame.BackgroundColor3 = DARK
+inputFrame.BorderSizePixel = 0
+inputFrame.Parent = chatArea
+
+local inputCorner = Instance.new("UICorner")
+inputCorner.CornerRadius = UDim.new(0, 10)
+inputCorner.Parent = inputFrame
+
+local inputStroke = Instance.new("UIStroke")
+inputStroke.Color = DARK_RED
+inputStroke.Thickness = 1
+inputStroke.Parent = inputFrame
+
+local input = Instance.new("TextBox")
+input.Size = UDim2.new(1, -65, 1, 0)
+input.Position = UDim2.new(0, 12, 0, 0)
+input.BackgroundTransparency = 1
+input.PlaceholderText = "Message AI1ReD..."
+input.PlaceholderColor3 = GRAY
+input.Text = ""
+input.TextColor3 = WHITE
+input.TextSize = 15
+input.Font = Enum.Font.Gotham
+input.TextXAlignment = Enum.TextXAlignment.Left
+input.ClearTextOnFocus = false
+input.Parent = inputFrame
+
+local send = Instance.new("TextButton")
+send.Size = UDim2.new(0, 45, 0, 45)
+send.Position = UDim2.new(1, -50, 0, 5)
+send.BackgroundColor3 = RED
+send.BorderSizePixel = 0
+send.Text = "➤"
+send.TextColor3 = WHITE
+send.TextSize = 20
+send.Font = Enum.Font.GothamBold
+send.Parent = inputFrame
+
+local sendCorner = Instance.new("UICorner")
+sendCorner.CornerRadius = UDim.new(0, 9)
+sendCorner.Parent = send
+
+--==================================================
+-- CHAT SYSTEM
+--==================================================
+
+local chats = {}
+local currentChat = nil
+local chatNumber = 0
+
+local function clearMessages()
+	for _, child in ipairs(messages:GetChildren()) do
+		if child:IsA("Frame") then
+			child:Destroy()
+		end
+	end
+end
+
+local function createChat()
+	chatNumber += 1
+
+	local chat = {
+		name = "New Chat " .. chatNumber,
+		messages = {}
+	}
+
+	table.insert(chats, chat)
+	currentChat = chat
+
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, 0, 0, 38)
+	button.BackgroundColor3 = LIGHT_DARK
+	button.BorderSizePixel = 0
+	button.Text = chat.name
+	button.TextColor3 = WHITE
+	button.TextSize = 14
+	button.Font = Enum.Font.Gotham
+	button.TextXAlignment = Enum.TextXAlignment.Left
+	button.Parent = chatList
+
+	local padding = Instance.new("UIPadding")
+	padding.PaddingLeft = UDim.new(0, 10)
+	padding.Parent = button
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 7)
+	corner.Parent = button
+
+	button.MouseButton1Click:Connect(function()
+		currentChat = chat
+		chatTitle.Text = chat.name
+
+		clearMessages()
+
+		for _, msg in ipairs(chat.messages) do
+			addMessage(msg.sender, msg.text, msg.isAI)
+		end
+	end)
+
+	return chat
+end
+
+local function addChatMessage(sender, text, isAI)
+
+	if not currentChat then
+		return
+	end
+
+	table.insert(currentChat.messages, {
+		sender = sender,
+		text = text,
+		isAI = isAI
+	})
+
+	addMessage(sender, text, isAI)
+end
+
+--==================================================
+-- SEND MESSAGE
+--==================================================
+
+local function sendMessage()
+
+	local text = input.Text
+
+	if text == "" then
+		return
+	end
+
+	if not currentChat then
+		createChat()
+	end
+
+	input.Text = ""
+
+	addChatMessage(PLAYER_NAME, text, false)
+
+	-- Temporary response
+	task.delay(0.5, function()
+
+		addChatMessage(
+			AI_NAME,
+			"Hello, MR.ReD23! I received your message: " .. text,
+			true
+		)
+
+	end)
+end
+
+send.MouseButton1Click:Connect(sendMessage)
+
+input.FocusLost:Connect(function(enterPressed)
+
+	if enterPressed then
+		sendMessage()
+	end
+
+end)
+
+newChat.MouseButton1Click:Connect(function()
+
+	local chat = createChat()
+
+	addChatMessage(
+		AI_NAME,
+		"Hello, MR.ReD23! I'm AI1ReD. How can I help you?",
+		true
+	)
+
+end)
+
+--==================================================
+-- CLOSE / OPEN
+--==================================================
+
+closeButton.MouseButton1Click:Connect(function()
+
+	main.Visible = false
+	openButton.Visible = true
+
+end)
+
+openButton.MouseButton1Click:Connect(function()
+
+	main.Visible = true
+	openButton.Visible = false
+
+end)
+
+--==================================================
+-- INITIAL CHAT
+--==================================================
+
+local firstChat = createChat()
+
+addChatMessage(
+	AI_NAME,
+	"Hello, MR.ReD23! I'm AI1ReD. How can I help you?",
+	true
+)
